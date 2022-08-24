@@ -77,11 +77,29 @@ r <- raster(nrows=6000,
           crs="EPSG:4326",
           vals=NULL
           )
-values(r)<- runif(n = ncell(r),min = -1,max = 1)
-r = mask(rast(r),world)
+
+n = 3
+values(r)<- rep(1:n,ncell(r)/n)
+plot(mask(rast(r),world),
+     breaks=1:((2*n)/(1/2)),
+     type="interval",
+     grid=TRUE,
+     col=rainbow(length(1:((2*n)/(1/2))))
+     )
 
 #r = project(rast(r),mycrs)
 help(plot,package = terra)
 
+# make a plot
+#plot(r,grid=TRUE,type="interval")
+plot(crop(glb_elv,ext),breaks=c(0,100,500,1000,Inf),grid=TRUE,type="interval")
+plot(crop(world,ext),add=T)
+plot(vect(wp),col=wp$USA_SSHS,add=T)
+wp = cyPath %>% filter(BASIN=="WP") %>%filter(SEASON==2020) %>% filter(USA_SSHS>0)
 
+# make a plot
+#plot(r,grid=TRUE,type="interval")
+plot(crop(glb_elv,ext),breaks=c(0,100,500,1000,Inf),col=cm.colors(4),grid=TRUE,type="interval")
+plot(crop(world,ext),border="black",lwd=2,add=T)
+plot(vect(wp),col=wp$USA_SSHS,add=T)
 
