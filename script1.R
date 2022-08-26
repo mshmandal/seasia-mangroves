@@ -35,7 +35,7 @@ world = world(path=paste0(data_dir,"World_shp"))
 #      )
 
 gmw2020 = vect(paste0(data_dir,"GMW","/","gmw_v3_2020_vec.shp"))
-gmw2020 = crop(gmw2020,ext)
+gmw2020 = crop(gmw2020,ext(88,89,22,23))
 gmw2020 = simplifyGeom(gmw2020, tolerance=5, preserveTopology=TRUE, makeValid=TRUE)
 
 ################################################################################
@@ -53,7 +53,7 @@ cyPath$lon <- as.numeric(cyPath$LON)
 
 # filter by basin and year
 
-
+wp = cyPath %>% filter(BASIN=="WP") %>%filter(SEASON>2015) %>% filter(USA_SSHS>0)
 wp = vect(wp,geom=c("lon","lat"),crs="EPSG:4326")
 
 
@@ -63,8 +63,6 @@ wp = vect(wp,geom=c("lon","lat"),crs="EPSG:4326")
 # get vector data
 mycrs = "EPSG:3857"
 glb_elv = elevation_global(res = 10,path=paste0(data_dir,"world_shp"))
-
-gmw2020 = terra::crop(gmw2020,ext)
 
 # Create a raster in the study extent
 library(raster)
@@ -92,9 +90,14 @@ help(plot,package = terra)
 
 # make a plot
 #plot(r,grid=TRUE,type="interval")
-plot(crop(glb_elv,ext),breaks=c(0,100,500,1000,Inf),grid=TRUE,type="interval")
-plot(crop(world,ext),add=T)
-plot(vect(wp),col=wp$USA_SSHS,add=T)
+plot(crop(glb_elv,ext),
+     breaks=c(0,100,500,1000,Inf),
+     grid=TRUE,type="interval",
+     legend=F,
+     col=heat.colors(5))
+plot(crop(world,ext),add=F)
+plot(wp,col=wp$NUMBER,add=T,cex=.8)
+
 wp = cyPath %>% filter(BASIN=="WP") %>%filter(SEASON==2020) %>% filter(USA_SSHS>0)
 
 # make a plot
